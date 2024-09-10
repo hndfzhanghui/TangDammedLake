@@ -1,0 +1,35 @@
+{
+    "time_step": 0.1,
+    "gravity": 9.81,
+    
+    "grid_width_x": 1.0,
+    "grid_width_y": 1.0,
+    
+    "erosion_constant": 0.1,
+    "deposition_constant": 0.1,
+    
+    "evaporation_constant": 0.05,
+    
+    "rainfall_intensity_mm_per_hour": 0.001,
+    "rainfall_probability": 0.0,
+    
+    "river_speed": 0.1,
+    
+    "min_pipe_area": 0.01,
+    "max_pipe_area": 100.0,
+    
+    "viscosity": 0.02,
+    "max_flow_speed": 10,
+    
+    "initial_fluid_height": 0.0,
+    
+    "terrain_file": "terrain_data.txt",
+    "river_area_file": "river_area.txt",
+    
+    "boundary_conditions": {
+        "left": "closed",
+        "right": "closed",
+        "top": "closed",
+        "bottom": "closed"
+    }
+}
