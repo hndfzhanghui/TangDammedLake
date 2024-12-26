@@ -377,5 +377,26 @@ def step(settings, water_height, terrain_height, outflow_flux_left, outflow_flux
     # 第5步: 计算水的蒸发
     water_height = evaporation(water_height, settings.grid_size_x, settings.grid_size_y, settings.evaporation_constant, settings.time_step)
     
+    # 数值稳定性优化：处理边界条件
+    # 设置边界水深为0
+    water_height[0, :] = 0
+    water_height[-1, :] = 0
+    water_height[:, 0] = 0
+    water_height[:, -1] = 0
+    
+    # 确保水深不会为负值
+    water_height = np.maximum(water_height, 0)
+    
+    # 应用阈值，过滤掉极小值，避免数值误差累积
+    water_height = np.where(water_height < 1e-6, 0, water_height)
+    sediment = np.where(sediment < 1e-6, 0, sediment)
+    
+    # 限制地形变化的最大幅度，避免数值不稳定
+    max_terrain_change = 0.1  # 每步允许的最大变化（米）
+    if hasattr(settings, 'initial_terrain_height'):
+        terrain_height = np.clip(terrain_height,
+                               settings.initial_terrain_height - max_terrain_change,
+                               settings.initial_terrain_height + max_terrain_change)
+    
     # 返回更新后的水深、地形高度和泥沙数组
     return water_height, terrain_height, sediment, velocity_x, velocity_y, erosion_deposition

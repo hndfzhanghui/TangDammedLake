@@ -53,7 +53,7 @@ class SimulationSettings:
         self.grid_size_y = self.terrain_height.shape[0]  # 网格Y方向大小
 
         # 加载河流区域文件
-        self.river_area_file = config.get("river_area_file", "river_area.txt")
+        self.river_area_file = config.get("river_area_file", "river_area_data.txt")
         self.river_area = np.loadtxt(self.river_area_file, dtype=bool)  # 假设文件为TXT格式，存储河流区域数组
 
     def display_settings(self):
