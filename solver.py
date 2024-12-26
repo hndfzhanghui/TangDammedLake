@@ -72,7 +72,7 @@ def simulate_water_flow(terrain_height, water_height, outflow_flux_left, outflow
     # TODO: 2. 目前这里没有考虑周围一圈的网格怎么计算，直接是没有参与计算；
     for i in range(1, grid_size_y - 1):
         for j in range(1, grid_size_x - 1):
-            if water_height[i, j] > 1e-6:  # 只有当有足够的水时才计算流动
+            if water_height[i, j] > 1e-3:  # 只有当有足够的水时才计算流动
 
                 # 计算各个方向的水位差
                 # 注意：在python中，数组第1个是行，第2个是列；因此对于i,j来说，其左边是i,j-1，右边是i,j+1，上边是i-1,j，下边是i+1,j
@@ -352,10 +352,10 @@ def step(settings, water_height, terrain_height, outflow_flux_left, outflow_flux
     - velocity_y: 更新后的Y方向速度
     """
     
-    # 第1步: 应用降雨和河流的影响
-    water_height = apply_rain_and_river(water_height, settings.rainfall_intensity_mm_per_hour, settings.rainfall_probability,
-                                        settings.river_speed, settings.river_area, settings.grid_size_x, settings.grid_size_y, 
-                                        settings.time_step)
+    # # 第1步: 应用降雨和河流的影响
+    # water_height = apply_rain_and_river(water_height, settings.rainfall_intensity_mm_per_hour, settings.rainfall_probability,
+    #                                     settings.river_speed, settings.river_area, settings.grid_size_x, settings.grid_size_y, 
+    #                                     settings.time_step)
     
     # 第2步: 模拟水流流动
     water_height, velocity_x, velocity_y, outflow_flux_left, outflow_flux_right, \
@@ -374,8 +374,8 @@ def step(settings, water_height, terrain_height, outflow_flux_left, outflow_flux
     # 第4步: 泥沙对流计算
     sediment = semi_lagrangian_advection(sediment, velocity_x, velocity_y, settings.grid_size_x, settings.grid_size_y, settings.time_step)
     
-    # 第5步: 计算水的蒸发
-    water_height = evaporation(water_height, settings.grid_size_x, settings.grid_size_y, settings.evaporation_constant, settings.time_step)
+    # # 第5步: 计算水的蒸发
+    # water_height = evaporation(water_height, settings.grid_size_x, settings.grid_size_y, settings.evaporation_constant, settings.time_step)
     
     # 数值稳定性优化：处理边界条件
     # 设置边界水深为0
@@ -388,8 +388,8 @@ def step(settings, water_height, terrain_height, outflow_flux_left, outflow_flux
     water_height = np.maximum(water_height, 0)
     
     # 应用阈值，过滤掉极小值，避免数值误差累积
-    water_height = np.where(water_height < 1e-6, 0, water_height)
-    sediment = np.where(sediment < 1e-6, 0, sediment)
+    water_height = np.where(water_height < 1e-3, 0, water_height)
+    sediment = np.where(sediment < 1e-3, 0, sediment)
     
     # 限制地形变化的最大幅度，避免数值不稳定
     max_terrain_change = 0.1  # 每步允许的最大变化（米）

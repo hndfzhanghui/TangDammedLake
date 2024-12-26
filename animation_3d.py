@@ -88,33 +88,41 @@ class Visualizer3D(Visualizer):
 
         # 设置视角和高度范围
         for ax in [self.axs[0], self.axs[1], self.axs[3]]:
-            ax.view_init(elev=30, azim=225)  # 修改方位角到225度来反转x方向
-
-        # 设置第一个图的高度范围
-        self.axs[0].set_zlim(0, 80)
+            ax.view_init(elev=30, azim=225)  # 设置视角
+            ax.set_zlim(0, 80)  # z轴向上为正
 
         # 初始化3D图形
         self.terrain_surface, self.water_surface = self.create_terrain_water_surface(
             self.axs[0], initial_state['terrain_height'], initial_state['water_height']
         )
-        
-        # 初始化累积搬移量图，设置自适应高度范围
         self.erosion_plot = self.axs[1].plot_surface(self.X, self.Y, self.cumulative_erosion, cmap='RdBu_r')
         
-        # 初始化流速矢量图，设置固定的坐标范围
-        max_velocity = np.sqrt(np.max(initial_state['velocity_x']**2 + initial_state['velocity_y']**2))
-        self.quiver = self.axs[2].quiver(initial_state['velocity_x'], initial_state['velocity_y'])
+        # 初始化流速矢量图
+        magnitude = np.sqrt(initial_state['velocity_x']**2 + initial_state['velocity_y']**2)
+        mask = magnitude > 1e-6
+        if np.any(mask):
+            self.quiver = self.axs[2].quiver(self.X[mask], self.Y[mask],
+                                           initial_state['velocity_x'][mask],
+                                           initial_state['velocity_y'][mask])  # y轴向上为正
+        
+        # 设置流速图的坐标范围
         self.axs[2].set_xlim(0, self.settings.grid_size_x)
         self.axs[2].set_ylim(0, self.settings.grid_size_y)
         
-        # 初始化实时搬移量图，设置自适应高度范围
+        # 初始化实时搬移量图
         self.sediment_plot = self.axs[3].plot_surface(self.X, self.Y, initial_state['erosion_deposition'], cmap='RdBu_r')
 
-        # 设置子图标题
+        # 设置子图标题和标签
         self.axs[0].set_title('地形与水深', fontproperties=font)
         self.axs[1].set_title('累积搬移量', fontproperties=font)
         self.axs[2].set_title('流速流向', fontproperties=font)
         self.axs[3].set_title('实时搬移量', fontproperties=font)
+
+        # 设置坐标轴标签
+        for ax in [self.axs[0], self.axs[1], self.axs[3]]:
+            ax.set_xlabel('X')
+            ax.set_ylabel('Y')
+            ax.set_zlabel('高度 (m)')
 
         # 创建暂停/播放按钮
         ax_button = plt.axes([0.81, 0.05, 0.1, 0.075])
@@ -135,15 +143,13 @@ class Visualizer3D(Visualizer):
         for ax in [self.axs[0], self.axs[1], self.axs[3]]:
             ax.clear()
 
-        # 重新设置视角
+        # 重新设置视角和标签
         for ax in [self.axs[0], self.axs[1], self.axs[3]]:
-            ax.view_init(elev=30, azim=225)  # 修改方位角到225度来反转x方向
+            ax.view_init(elev=30, azim=225)  # 设置视角
+            ax.set_zlim(0, 80)  # z轴向上为正
             ax.set_xlabel('X')
             ax.set_ylabel('Y')
             ax.set_zlabel('高度 (m)')
-
-        # 设置第一个图的固定高度范围
-        self.axs[0].set_zlim(0, 80)
 
         # 更新地形和水面
         self.terrain_surface, self.water_surface = self.create_terrain_water_surface(
@@ -151,28 +157,25 @@ class Visualizer3D(Visualizer):
         )
         self.axs[0].set_title('地形与水深', fontproperties=font)
 
-        # 更新累积搬移量图（自适应高度范围）
+        # 更新累积搬移量图
         self.axs[1].plot_surface(self.X, self.Y, self.cumulative_erosion, cmap='RdBu_r')
         self.axs[1].set_title('累积搬移量', fontproperties=font)
 
         # 更新流速矢量图
         self.axs[2].clear()
         self.axs[2].set_title('流速流向', fontproperties=font)
-        
-        # 计算速度场
         magnitude = np.sqrt(state['velocity_x'] ** 2 + state['velocity_y'] ** 2)
         mask = magnitude > 1e-6
-        
         if np.any(mask):
             self.axs[2].quiver(self.X[mask], self.Y[mask],
                              state['velocity_x'][mask],
-                             state['velocity_y'][mask])
+                             state['velocity_y'][mask])  # y轴向上为正
             
             # 设置固定的坐标范围
             self.axs[2].set_xlim(0, self.settings.grid_size_x)
             self.axs[2].set_ylim(0, self.settings.grid_size_y)
 
-        # 更新实时搬移量图（自适应高度范围）
+        # 更新实时搬移量图
         self.axs[3].plot_surface(self.X, self.Y, state['erosion_deposition'], cmap='RdBu_r')
         self.axs[3].set_title('实时搬移量', fontproperties=font)
 

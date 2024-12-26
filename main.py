@@ -1,7 +1,7 @@
 import numpy as np
 from enum import Enum
 from settings import SimulationSettings
-from animation import Visualizer3D
+from animation_3d import Visualizer3D
 from animation_2d import Visualizer2D
 
 class VisualizationMode(Enum):
@@ -36,7 +36,7 @@ def run_simulation(settings, initial_state, vis_mode=VisualizationMode.NONE, upd
     num_steps = 3600
     for step in range(num_steps):
         # 执行计算
-        from solver import step as compute_step
+        from solver_optimized import step as compute_step
         state['water_height'], state['terrain_height'], state['sediment'], \
         state['velocity_x'], state['velocity_y'], state['erosion_deposition'] = compute_step(
             settings,
@@ -52,8 +52,10 @@ def run_simulation(settings, initial_state, vis_mode=VisualizationMode.NONE, upd
         )
         
         # 如果需要可视化且到达更新间隔，则更新显示
-        if visualizer and step % update_interval == 0:
-            visualizer.update(step + 1, state)
+        if step % update_interval == 0:
+            print(f"step: {step + 1}")
+            if visualizer:
+                visualizer.update(step + 1, state)
     
     # 如果有可视化，等待窗口关闭
     if visualizer:
@@ -67,7 +69,7 @@ def main():
 
     # 初始化状态
     initial_state = {
-        'water_height': np.full((settings.grid_size_y, settings.grid_size_x), settings.initial_fluid_height),
+        'water_height': settings.initial_water_height.copy(),  # 使用从文件读取的初始水深
         'terrain_height': settings.terrain_height.copy(),
         'sediment': np.zeros((settings.grid_size_y, settings.grid_size_x)),
         'velocity_x': np.zeros((settings.grid_size_y, settings.grid_size_x)),
@@ -80,9 +82,9 @@ def main():
     }
 
     # 运行模拟 - 可以选择不同的可视化模式
-    # final_state = run_simulation(settings, initial_state)  # 不显示可视化
-    final_state = run_simulation(settings, initial_state, VisualizationMode.MODE_3D, update_interval=5)  # 2D可视化，每5步更新一次
-    # final_state = run_simulation(settings, initial_state, VisualizationMode.MODE_3D, update_interval=1)  # 3D可视化，每步都更新
+    # final_state = run_simulation(settings, initial_state, update_interval=100)  # 不显示可视化
+    final_state = run_simulation(settings, initial_state, VisualizationMode.MODE_3D, update_interval=1)  # 2D可视化，每10步更新一次
+    # final_state = run_simulation(settings, initial_state, VisualizationMode.MODE_3D, update_interval=10)  # 3D可视化，每步都更新
 
     # 输出结果
     print("\n模拟完成！")

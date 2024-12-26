@@ -1,5 +1,5 @@
 {
-    "time_step": 1.0,
+    "time_step": 0.1,
     "gravity": 9.81,
     
     "grid_width_x": 1.0,
@@ -10,7 +10,7 @@
     
     "evaporation_constant": 0.05,
     
-    "rainfall_intensity_mm_per_hour": 0.001,
+    "rainfall_intensity_mm_per_hour": 0.0,
     "rainfall_probability": 0.0,
     
     "river_speed": 0.1,
@@ -21,7 +21,7 @@
     "viscosity": 0.02,
     "max_flow_speed": 10,
     
-    "initial_fluid_height": 0.0,
+    "initial_water_height_file": "initial_water_height.txt",
     
     "terrain_file": "terrain_data.txt",
     "river_area_file": "river_area_data.txt",
