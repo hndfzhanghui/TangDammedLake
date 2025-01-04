@@ -83,7 +83,7 @@ def main():
 
     # 运行模拟 - 可以选择不同的可视化模式
     # final_state = run_simulation(settings, initial_state, update_interval=100)  # 不显示可视化
-    final_state = run_simulation(settings, initial_state, VisualizationMode.MODE_3D, update_interval=1)  # 2D可视化，每10步更新一次
+    final_state = run_simulation(settings, initial_state, VisualizationMode.MODE_2D, update_interval=1)  # 2D可视化，每10步更新一次
     # final_state = run_simulation(settings, initial_state, VisualizationMode.MODE_3D, update_interval=10)  # 3D可视化，每步都更新
 
     # 输出结果
