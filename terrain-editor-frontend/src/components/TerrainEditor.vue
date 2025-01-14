@@ -47,6 +47,9 @@
                   type="number"
                   :rules="[v => !!v || '请输入地形宽度', v => v > 0 || '宽度必须大于0']"
                   required
+                  outlined
+                  dense
+                  class="mb-4"
                 ></v-text-field>
 
                 <v-text-field
@@ -55,6 +58,9 @@
                   type="number"
                   :rules="[v => !!v || '请输入地形长度', v => v > 0 || '长度必须大于0']"
                   required
+                  outlined
+                  dense
+                  class="mb-4"
                 ></v-text-field>
 
                 <v-text-field
@@ -68,6 +74,8 @@
                     v => v <= Math.min(initParams.width, initParams.height) / 10 || '网格太大'
                   ]"
                   required
+                  outlined
+                  dense
                 ></v-text-field>
               </v-form>
             </v-tab-item>
@@ -84,6 +92,8 @@
                     :rules="[v => !!v || '请选择地形文件']"
                     show-size
                     truncate-length="25"
+                    outlined
+                    dense
                   ></v-file-input>
                   <v-alert
                     type="info"
@@ -100,18 +110,18 @@
               </v-card>
             </v-tab-item>
           </v-tabs-items>
-        </v-card-text>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn
-            color="primary"
-            :disabled="!canProceed"
-            @click="handleInitConfirm"
-          >
-            确认并开始编辑
-          </v-btn>
-        </v-card-actions>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              :disabled="!canProceed"
+              @click="handleInitConfirm"
+            >
+              确认并开始编辑
+            </v-btn>
+          </v-card-actions>
+        </v-card-text>
       </v-card>
     </v-dialog>
 
